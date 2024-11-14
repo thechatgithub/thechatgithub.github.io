@@ -81,7 +81,10 @@
         
         <img src="90sdancingbaby.gif" alt="baby" width="200px" height="200px">
 
-        <div id="timer" class="timer"></div>
+        <div id="timer" class="timer">
+            <div id="days">0 days</div>
+            <div style="color: #ff00ff; font-size: 0.8em;">since last poop incident</div>
+        </div>
 
         <h2 style="color: #00ffff; text-shadow: 1px 1px #ff00ff; margin-bottom: 10px;">Leaderboard</h2>
         <table>
@@ -96,7 +99,7 @@
             </tbody>
         </table>
 
-        <div id="visitorCount" class="visitor-count">Visitor Count: 100</div>
+        <div id="visitorCount" class="visitor-count">Visitor Count: 1000</div>
 
     </div>
 
@@ -114,9 +117,7 @@
             const days = Math.floor(difference / (1000 * 60 * 60 * 24));
             const dayText = days === 1 ? "day" : "days";
 
-            document.getElementById('timer').innerHTML = 
-                `${days} ${dayText} ` +
-                '<span style="color: #ff00ff;">since last poop incident</span>';
+            document.getElementById('days').textContent = `${days} ${dayText}`;
         }
 
         function populateLeaderboard() {
@@ -131,11 +132,11 @@
         }
 
         function updateVisitorCount() {
-            let count = 100;
+            let count = 1000;
             setInterval(() => {
-                count += Math.floor(Math.random() * 5) + 1;
+                count += Math.floor(Math.random() * 50) + 10;
                 document.getElementById('visitorCount').textContent = `Visitor Count: ${count}`;
-            }, 5000);
+            }, 100);
         }
 
         // Initialize everything
