@@ -81,7 +81,7 @@
         
         <img src="90sdancingbaby.gif" alt="baby" width="200px" height="200px">
 
-        <div id="timer" class="timer">Loading... since last poop incident</div>
+        <div id="timer" class="timer"></div>
 
         <h2 style="color: #00ffff; text-shadow: 1px 1px #ff00ff; margin-bottom: 10px;">Leaderboard</h2>
         <table>
@@ -112,15 +112,10 @@
             const now = new Date();
             const difference = now.getTime() - startDate.getTime();
             const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+            const dayText = days === 1 ? "day" : "days";
 
             document.getElementById('timer').innerHTML = 
-                `${days.toString().padStart(2, '0')} days, ` +
-                `${hours.toString().padStart(2, '0')}:` +
-                `${minutes.toString().padStart(2, '0')}:` +
-                `${seconds.toString().padStart(2, '0')} ` +
+                `${days} ${dayText} ` +
                 '<span style="color: #ff00ff;">since last poop incident</span>';
         }
 
