@@ -17,7 +17,7 @@
             background-attachment: fixed;
         }
         .container {
-            max-width: 800px;
+            max-width: 1000px;
             margin: 0 auto;
             border: 3px solid #4a0080;
             border-radius: 10px;
@@ -40,21 +40,46 @@
             border: 2px solid #00ff00;
             border-radius: 5px;
         }
+        .controls {
+            margin-bottom: 20px;
+        }
+        .sort-btn {
+            background-color: #4a0080;
+            color: #00ffff;
+            border: 2px solid #00ffff;
+            padding: 8px 16px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+        }
+        .sort-btn:hover {
+            background-color: #6a00a0;
+        }
+        .sort-btn.active {
+            background-color: #00ffff;
+            color: #000033;
+        }
         table {
             width: 100%;
             border-collapse: collapse;
             margin-bottom: 20px;
             background-color: rgba(0, 0, 0, 0.7);
+            font-size: 0.9em;
         }
         th {
             background-color: #4a0080;
             border: 2px solid #00ffff;
-            padding: 5px;
+            padding: 8px 5px;
             color: #ffffff;
+            cursor: pointer;
+        }
+        th:hover {
+            background-color: #6a00a0;
         }
         td {
             border: 2px solid #4a0080;
-            padding: 5px;
+            padding: 8px 5px;
             color: #00ff00;
         }
         tr:nth-child(even) {
@@ -68,16 +93,21 @@
             display: inline-block;
             border-radius: 5px;
         }
-        .footer {
-            margin-top: 20px;
+        .incident-history {
+            max-height: 200px;
+            overflow-y: auto;
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 2px solid #4a0080;
+            margin-top: 10px;
+            padding: 10px;
+            text-align: left;
             font-size: 0.8em;
-            color: #ffffff;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>On Notice: Russ</h1>
+        <h1>On Notice: Jon</h1>
         
         <img src="90sdancingbaby.gif" alt="baby" width="200px" height="200px">
 
@@ -86,12 +116,21 @@
             <div style="color: #ff00ff; font-size: 0.8em;">since last poop incident</div>
         </div>
 
+        <div class="controls">
+            <button class="sort-btn active" onclick="sortBy('totalIncidents')">Sort by Total Incidents</button>
+            <button class="sort-btn" onclick="sortBy('daysSince')">Sort by Days Since</button>
+            <button class="sort-btn" onclick="sortBy('longestStreak')">Sort by Longest Streak</button>
+        </div>
+
         <h2 style="color: #00ffff; text-shadow: 1px 1px #ff00ff; margin-bottom: 10px;">Leaderboard</h2>
         <table>
             <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Days</th>
+                    <th onclick="sortBy('name')">Name</th>
+                    <th onclick="sortBy('totalIncidents')">Total Incidents</th>
+                    <th onclick="sortBy('daysSince')">Days Since Last</th>
+                    <th onclick="sortBy('longestStreak')">Longest Streak</th>
+                    <th>Last Incident</th>
                 </tr>
             </thead>
             <tbody id="leaderboard">
@@ -99,39 +138,157 @@
             </tbody>
         </table>
 
+        <div id="incidentHistory" class="incident-history" style="display: none;">
+            <h3 style="color: #00ffff;">Recent Incidents</h3>
+            <div id="historyContent"></div>
+        </div>
+
         <div id="visitorCount" class="visitor-count">Visitor Count: 1000</div>
 
     </div>
 
     <script>
-        const startDate = new Date(2025, 03, 22);
+        let peopleData = {
+            "Russ": {
+                incidents: [
+                    new Date(2025, 3, 22), // April 22, 2025
+                ]
+            },
+            "Jon": {
+                incidents: [
+                    new Date(2025, 5, 16), // June 16, 2025
+                    new Date(2024, 8, 21), // Sep 21, 2025
+                ]
+            },
+            "Jake": {
+                incidents: [
+                    new Date(2024, 10, 19), // Nov 19, 2024
+                ]
+            },
+            "Terry": {
+                incidents: [
+                    new Date(2024, 10, 13), // Nov 23, 2024
+                ]
+            },
+            "Peyton": {
+                incidents: [
+                    new Date(2025, 1, 28), // February 28, 2025
+                ]
+            }
+        };
 
-        // Hardcoded leaderboard data
-        const leaderboardData = [
-            { name: "Jon", days: 49 },
-            { name: "Jake", days: 4 },
-            { name: "Terry", days: 106 },
-            { name: "Peyton", days: 53 }
-        ];
+        let currentSort = 'totalIncidents';
+
+        function calculateStats(person) {
+            const incidents = peopleData[person].incidents.sort((a, b) => b - a); // Sort newest first
+            const now = new Date();
+            
+            if (incidents.length === 0) {
+                return {
+                    daysSince: Infinity,
+                    totalIncidents: 0,
+                    longestStreak: 0,
+                    lastIncident: null
+                };
+            }
+
+            const daysSince = Math.floor((now - incidents[0]) / (1000 * 60 * 60 * 24));
+            const totalIncidents = incidents.length;
+
+            // Calculate longest streak (max days between any two incidents or current streak)
+            let longestStreak = daysSince; // Current streak
+            if (incidents.length > 1) {
+                for (let i = 0; i < incidents.length - 1; i++) {
+                    const streak = Math.floor((incidents[i] - incidents[i + 1]) / (1000 * 60 * 60 * 24));
+                    longestStreak = Math.max(longestStreak, streak);
+                }
+            }
+
+            return {
+                daysSince,
+                totalIncidents,
+                longestStreak,
+                lastIncident: incidents[0]
+            };
+        }
 
         function updateTimer() {
-            const now = new Date();
-            const difference = now.getTime() - startDate.getTime();
-            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-            const dayText = days === 1 ? "day" : "days";
-
-            document.getElementById('days').textContent = `${days} ${dayText}`;
+            const jonStats = calculateStats('Jon');
+            const dayText = jonStats.daysSince === 1 ? "day" : "days";
+            document.getElementById('days').textContent = `${jonStats.daysSince} ${dayText}`;
         }
 
         function populateLeaderboard() {
             const leaderboardBody = document.getElementById('leaderboard');
-            leaderboardData.sort((a, b) => b.days - a.days);
-            leaderboardBody.innerHTML = leaderboardData.map(entry => `
-                <tr>
-                    <td>${entry.name}</td>
-                    <td>${entry.days}</td>
+            const people = Object.keys(peopleData).map(person => ({
+                name: person,
+                ...calculateStats(person)
+            }));
+
+            // Sort based on current sort method
+            people.sort((a, b) => {
+                switch (currentSort) {
+                    case 'name':
+                        return a.name.localeCompare(b.name);
+                    case 'daysSince':
+                        return b.daysSince - a.daysSince;
+                    case 'totalIncidents':
+                        // Primary sort by total incidents, then by days since as tiebreaker
+                        if (b.totalIncidents !== a.totalIncidents) {
+                            return b.totalIncidents - a.totalIncidents;
+                        }
+                        return b.daysSince - a.daysSince;
+                    case 'longestStreak':
+                        return b.longestStreak - a.longestStreak;
+                    default:
+                        // Default: sort by total incidents first, then days since
+                        if (b.totalIncidents !== a.totalIncidents) {
+                            return b.totalIncidents - a.totalIncidents;
+                        }
+                        return b.daysSince - a.daysSince;
+                }
+            });
+
+            leaderboardBody.innerHTML = people.map(person => `
+                <tr onclick="showHistory('${person.name}')">
+                    <td style="cursor: pointer;">${person.name}</td>
+                    <td>${person.totalIncidents}</td>
+                    <td>${person.daysSince === Infinity ? '∞' : person.daysSince}</td>
+                    <td>${person.longestStreak}</td>
+                    <td>${person.lastIncident ? person.lastIncident.toLocaleDateString() : 'Never'}</td>
                 </tr>
             `).join('');
+        }
+
+        function sortBy(method) {
+            currentSort = method;
+            
+            // Update button styles
+            document.querySelectorAll('.sort-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            populateLeaderboard();
+        }
+
+        function showHistory(person) {
+            const historyDiv = document.getElementById('incidentHistory');
+            const historyContent = document.getElementById('historyContent');
+            
+            if (!peopleData[person] || peopleData[person].incidents.length === 0) {
+                historyContent.innerHTML = `<p>${person} has no recorded incidents.</p>`;
+            } else {
+                const incidents = [...peopleData[person].incidents].sort((a, b) => b - a);
+                let historyHtml = `<h4 style="color: #ff00ff;">${person}'s Incident History:</h4>`;
+                
+                incidents.forEach((incident, index) => {
+                    const daysSince = Math.floor((new Date() - incident) / (1000 * 60 * 60 * 24));
+                    historyHtml += `<div>${incident.toLocaleDateString()} (${daysSince} days ago)</div>`;
+                });
+                
+                historyContent.innerHTML = historyHtml;
+            }
+            
+            historyDiv.style.display = historyDiv.style.display === 'none' ? 'block' : 'none';
         }
 
         function updateVisitorCount() {
