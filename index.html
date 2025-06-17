@@ -267,33 +267,31 @@
     </div>
 
     <script>
-        // Enhanced data structure to track multiple incidents per person
-        // Converted from original single-incident data, plus Jon's new incident today
         let peopleData = {
             "Russ": {
                 incidents: [
-                    new Date(2025, 3, 22), // April 22, 2025 (original)
+                    new Date(2025, 3, 22), // April 22, 2025
                 ]
             },
             "Jon": {
                 incidents: [
-                    new Date(2025, 5, 16), // June 16, 2025 (TODAY - new incident!)
-                    new Date(2025, 3, 28), // April 28, 2025 (calculated from original 49 days)
+                    new Date(2025, 5, 16), // June 16, 2025
+                    new Date(2024, 8, 21), // Sep 21, 2024
                 ]
             },
             "Jake": {
                 incidents: [
-                    new Date(2025, 5, 12), // June 12, 2025 (calculated from original 4 days)
+                    new Date(2024, 10, 19), // Nov 19, 2024
                 ]
             },
             "Terry": {
                 incidents: [
-                    new Date(2025, 1, 1), // February 1, 2025 (calculated from original 106 days)
+                    new Date(2024, 10, 13), // Nov 13, 2024
                 ]
             },
             "Peyton": {
                 incidents: [
-                    new Date(2025, 3, 24), // April 24, 2025 (calculated from original 53 days)
+                    new Date(2025, 1, 28), // February 28, 2025
                 ]
             }
         };
