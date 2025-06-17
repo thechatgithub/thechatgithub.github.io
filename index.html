@@ -25,10 +25,21 @@
             padding: 20px;
             background-color: rgba(0, 0, 51, 0.7);
         }
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+                margin: 10px;
+            }
+        }
         h1 {
             font-size: 3em;
             text-shadow: 2px 2px #ff00ff, -2px -2px #00ffff;
             color: #ffffff;
+        }
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2em;
+            }
         }
         .timer {
             background-color: rgba(0, 0, 0, 0.7);
@@ -43,6 +54,11 @@
         .controls {
             margin-bottom: 20px;
         }
+        @media (max-width: 768px) {
+            .controls {
+                margin-bottom: 15px;
+            }
+        }
         .sort-btn {
             background-color: #4a0080;
             color: #00ffff;
@@ -52,6 +68,16 @@
             cursor: pointer;
             border-radius: 5px;
             font-family: 'Courier New', monospace;
+        }
+        @media (max-width: 768px) {
+            .sort-btn {
+                padding: 12px 8px;
+                margin: 3px;
+                font-size: 0.8em;
+                display: block;
+                width: 100%;
+                margin-bottom: 8px;
+            }
         }
         .sort-btn:hover {
             background-color: #6a00a0;
@@ -66,6 +92,11 @@
             margin-bottom: 20px;
             background-color: rgba(0, 0, 0, 0.7);
             font-size: 0.9em;
+        }
+        @media (max-width: 768px) {
+            table {
+                display: none;
+            }
         }
         th {
             background-color: #4a0080;
@@ -85,6 +116,76 @@
         tr:nth-child(even) {
             background-color: rgba(74, 0, 128, 0.5);
         }
+        
+        /* Mobile Card Layout */
+        .mobile-cards {
+            display: none;
+        }
+        @media (max-width: 768px) {
+            .mobile-cards {
+                display: block;
+            }
+        }
+        .person-card {
+            background-color: rgba(0, 0, 0, 0.7);
+            border: 2px solid #4a0080;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .person-card:hover {
+            border-color: #00ffff;
+            box-shadow: 0 0 10px rgba(0, 255, 255, 0.3);
+        }
+        .card-name {
+            font-size: 1.3em;
+            color: #ffffff;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        .card-stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 8px;
+            background-color: rgba(74, 0, 128, 0.3);
+            border-radius: 5px;
+            border: 1px solid #4a0080;
+        }
+        .stat-label {
+            font-size: 0.7em;
+            color: #00ffff;
+            display: block;
+            margin-bottom: 3px;
+        }
+        .stat-value {
+            font-size: 1.1em;
+            color: #00ff00;
+            font-weight: bold;
+        }
+        .card-incident-badge {
+            background-color: #ff00ff;
+            color: #000033;
+            padding: 4px 8px;
+            border-radius: 15px;
+            font-size: 0.8em;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .card-last-incident {
+            text-align: center;
+            font-size: 0.8em;
+            color: #ff00ff;
+            margin-top: 8px;
+        }
         .visitor-count {
             background-color: rgba(0, 0, 0, 0.7);
             color: #ff00ff;
@@ -92,6 +193,13 @@
             border: 2px dashed #00ffff;
             display: inline-block;
             border-radius: 5px;
+        }
+        @media (max-width: 768px) {
+            .visitor-count {
+                margin-top: 20px;
+                padding: 12px;
+                font-size: 0.9em;
+            }
         }
         .incident-history {
             max-height: 200px;
@@ -102,6 +210,13 @@
             padding: 10px;
             text-align: left;
             font-size: 0.8em;
+        }
+        @media (max-width: 768px) {
+            .incident-history {
+                font-size: 0.9em;
+                padding: 15px;
+                max-height: 250px;
+            }
         }
     </style>
 </head>
@@ -138,6 +253,10 @@
             </tbody>
         </table>
 
+        <div class="mobile-cards" id="mobileCards">
+            <!-- Mobile cards will be inserted here -->
+        </div>
+
         <div id="incidentHistory" class="incident-history" style="display: none;">
             <h3 style="color: #00ffff;">Recent Incidents</h3>
             <div id="historyContent"></div>
@@ -157,7 +276,7 @@
             "Jon": {
                 incidents: [
                     new Date(2025, 5, 16), // June 16, 2025
-                    new Date(2024, 8, 21), // Sep 21, 2025
+                    new Date(2024, 8, 21), // Sep 21, 2024
                 ]
             },
             "Jake": {
@@ -167,7 +286,7 @@
             },
             "Terry": {
                 incidents: [
-                    new Date(2024, 10, 13), // Nov 23, 2024
+                    new Date(2024, 10, 13), // Nov 13, 2024
                 ]
             },
             "Peyton": {
@@ -220,6 +339,7 @@
 
         function populateLeaderboard() {
             const leaderboardBody = document.getElementById('leaderboard');
+            const mobileCards = document.getElementById('mobileCards');
             const people = Object.keys(peopleData).map(person => ({
                 name: person,
                 ...calculateStats(person)
@@ -249,6 +369,7 @@
                 }
             });
 
+            // Populate desktop table
             leaderboardBody.innerHTML = people.map(person => `
                 <tr onclick="showHistory('${person.name}')">
                     <td style="cursor: pointer;">${person.name}</td>
@@ -257,6 +378,27 @@
                     <td>${person.longestStreak}</td>
                     <td>${person.lastIncident ? person.lastIncident.toLocaleDateString() : 'Never'}</td>
                 </tr>
+            `).join('');
+
+            // Populate mobile cards
+            mobileCards.innerHTML = people.map(person => `
+                <div class="person-card" onclick="showHistory('${person.name}')">
+                    <div class="card-name">${person.name}</div>
+                    <div class="card-incident-badge">${person.totalIncidents} Total Incident${person.totalIncidents !== 1 ? 's' : ''}</div>
+                    <div class="card-stats">
+                        <div class="stat-item">
+                            <span class="stat-label">Days Since Last</span>
+                            <span class="stat-value">${person.daysSince === Infinity ? '∞' : person.daysSince}</span>
+                        </div>
+                        <div class="stat-item">
+                            <span class="stat-label">Longest Streak</span>
+                            <span class="stat-value">${person.longestStreak}</span>
+                        </div>
+                    </div>
+                    <div class="card-last-incident">
+                        Last incident: ${person.lastIncident ? person.lastIncident.toLocaleDateString() : 'Never'}
+                    </div>
+                </div>
             `).join('');
         }
 
