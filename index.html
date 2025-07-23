@@ -337,9 +337,9 @@
         }
 
         function updateTimer() {
-            const jonStats = calculateStats('Jon');
-            const dayText = jonStats.daysSince === 1 ? "day" : "days";
-            document.getElementById('days').textContent = `${jonStats.daysSince} ${dayText}`;
+            const alexStats = calculateStats('Alex');
+            const dayText = alexStats.daysSince === 1 ? "day" : "days";
+            document.getElementById('days').textContent = `${alexStats.daysSince} ${dayText}`;
         }
 
         function populateLeaderboard() {
