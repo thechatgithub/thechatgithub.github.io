@@ -222,7 +222,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>On Notice: Jon</h1>
+        <h1>On Notice: Alex</h1>
         
         <img src="90sdancingbaby.gif" alt="baby" width="200px" height="200px">
 
@@ -285,6 +285,7 @@
                 incidents: [
                     new Date(2024, 10, 19), // Nov 19, 2024
                     new Date(2025, 7, 13), // Aug 13, 2025
+                    new Date(2026, 2, 29), // March 29, 2026
                 ]
             },
             "Terry": {
@@ -300,6 +301,7 @@
             "Alex": {
                 incidents: [
                     new Date(2025, 6, 23), // July 23, 2025
+                    new Date(2026, 3, 16), // April 16, 2026
                 ]
             },
             "Andy": {
@@ -345,9 +347,9 @@
         }
 
         function updateTimer() {
-            const jonStats = calculateStats('Jon');
-            const dayText = jonStats.daysSince === 1 ? "day" : "days";
-            document.getElementById('days').textContent = `${jonStats.daysSince} ${dayText}`;
+            const alexStats = calculateStats('Alex');
+            const dayText = alexStats.daysSince === 1 ? "day" : "days";
+            document.getElementById('days').textContent = `${alexStats.daysSince} ${dayText}`;
         }
 
         function populateLeaderboard() {
